@@ -1,0 +1,13 @@
+{
+    "name": "mikezor/aoc2020",
+    "require": {
+        "nette/utils": "^3.2",
+        "nette/robot-loader": "^3.3"
+    },
+    "authors": [
+        {
+            "name": "Michal Bukovský",
+            "email": "michal.bukovsky@zasilkovna.cz"
+        }
+    ]
+}
