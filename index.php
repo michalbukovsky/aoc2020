@@ -1,11 +1,17 @@
 <?php
 
+error_reporting(E_ALL);
+
+use Tracy\Debugger;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 $loader = new Nette\Loaders\RobotLoader;
 
 $loader->addDirectory(__DIR__ . '/days');
 $loader->addDirectory(__DIR__ . '/app');
+Debugger::enable(null, __DIR__ . '/log');
+Debugger::$strictMode = true;
 
 $loader->setTempDirectory(__DIR__ . '/temp');
 $loader->register();

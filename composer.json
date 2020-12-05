@@ -2,7 +2,8 @@
     "name": "mikezor/aoc2020",
     "require": {
         "nette/utils": "^3.2",
-        "nette/robot-loader": "^3.3"
+        "nette/robot-loader": "^3.3",
+        "tracy/tracy": "^2.7"
     },
     "authors": [
         {

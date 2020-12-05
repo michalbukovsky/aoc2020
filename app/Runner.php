@@ -16,11 +16,14 @@ abstract class Runner implements IRunner
 
     /**
      * @param string $folder
+     * @param bool $filterLines
+     * @param string $separator
      * @return string[]
      */
-    protected function getData(string $folder): array
+    protected function getData(string $folder, bool $filterLines = true, string $separator = "\n"): array
     {
-        return array_filter(explode("\n", file_get_contents($folder . '/data.txt')));
+        $data = explode($separator, file_get_contents($folder . '/data.txt'));
+        return ($filterLines === true ? array_filter($data) : $data);
     }
 
     abstract protected function runPart1(): string;
