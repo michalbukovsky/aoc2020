@@ -8,7 +8,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 $loader = new Nette\Loaders\RobotLoader;
 
-$loader->addDirectory(__DIR__ . '/days');
 $loader->addDirectory(__DIR__ . '/app');
 Debugger::enable(null, __DIR__ . '/log');
 Debugger::$strictMode = true;
@@ -27,7 +26,7 @@ if (!preg_match('~^\d{1,2}$~', $day)) {
     die("Only positive numbers, please\n");
 }
 
-$folderName = __DIR__ . '/days/' . str_pad($day, 2, '0', STR_PAD_LEFT);
+$folderName = __DIR__ . '/app/days/' . str_pad($day, 2, '0', STR_PAD_LEFT);
 if (!file_exists($folderName)) {
     die("Day not yet implemented\n");
 }
@@ -39,7 +38,7 @@ foreach ($filesInFolder as $filename) {
         $className = substr($filename, 0, -4);
         /** @var IRunner $day */
         $day = new $className();
-        echo $day->run($part) . "\n";
+        echo "Result: " . $day->run($part) . "\n";
         die;
     }
 }

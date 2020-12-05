@@ -12,7 +12,7 @@ class Multiplier extends Runner
                 $value1 = (int) $data[$i];
                 $value2 = (int) $data[$j];
                 if ($value1 + $value2 === 2020) {
-                    return "Result: " . ($value1 * $value2);
+                    return (string) ($value1 * $value2);
                 }
             }
         }
@@ -32,7 +32,7 @@ class Multiplier extends Runner
                     $value2 = (int) $data[$j];
                     $value3 = (int) $data[$k];
                     if ($value1 + $value2 + $value3 === 2020) {
-                        return "Result: " . ($value1 * $value2 * $value3);
+                        return (string) ($value1 * $value2 * $value3);
                     }
                 }
             }
