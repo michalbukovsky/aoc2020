@@ -39,7 +39,7 @@ class Bags extends Runner
 
     protected function runPart2(): string
     {
-        // TODO: Implement runPart2() method.
+        return (string) $this->containsHowMany(self::GOLD_BAG);
     }
 
     protected function initBags(): void
@@ -81,6 +81,21 @@ class Bags extends Runner
         }
 
         return false;
+    }
+
+    protected function containsHowMany(string $name): int
+    {
+        $contents = $this->bags[$name];
+        if ($contents === null) {
+            return 0;
+        }
+
+        $containsCount = 0;
+        foreach ($contents as $bagInsideName => $count) {
+            $containsCount += $count + $count * $this->containsHowMany($bagInsideName);
+        }
+
+        return $containsCount;
     }
 
 }
