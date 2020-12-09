@@ -26,6 +26,15 @@ abstract class Runner implements IRunner
         return ($filterLines === true ? array_filter($data) : $data);
     }
 
+    /**
+     * @param string[] $data
+     * @return int[]
+     */
+    protected function intifyData(array $data): array
+    {
+        return array_map('intval', $data);
+    }
+
     abstract protected function runPart1(): string;
 
     abstract protected function runPart2(): string;
