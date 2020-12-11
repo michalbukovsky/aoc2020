@@ -8,13 +8,16 @@ class Seats extends Runner
     /** @var int */
     protected $columns;
 
+    /** @var string[] */
+    private $data;
+
     public function __construct()
     {
-        $data = $this->getData(__DIR__);
-        $this->columns = strlen($data[0]);
+        $this->data = $this->getData(__DIR__);
+        $this->columns = strlen($this->data[0]);
 
         $this->seats = [];
-        foreach ($data as $line) {
+        foreach ($this->data as $line) {
             $row = [];
             $col = 0;
             while (isset($line[$col])) {
@@ -30,6 +33,22 @@ class Seats extends Runner
 
     protected function runPart1(): string
     {
+        $that = $this;
+        return $this->getOccupiedSeats(static function (array $seatsBefore, int $row, int $col) use ($that) {
+            return $that->isSeatOccupiedNeighboring($seatsBefore, $row, $col);
+        });
+    }
+
+    protected function runPart2(): string
+    {
+        $that = $this;
+        return $this->getOccupiedSeats(static function (array $seatsBefore, int $row, int $col) use ($that) {
+            return $that->isSeatOccupiedAcross($seatsBefore, $row, $col);
+        });
+    }
+
+    protected function getOccupiedSeats(callable $isOccupiedFn): int
+    {
         $seatsAfter = $this->seats;
 
         do {
@@ -39,11 +58,11 @@ class Seats extends Runner
 
             foreach ($seatsBefore as $row => $seatsRow) {
                 foreach ($seatsRow as $col => $seat) {
-                    $isOccipied = $this->isSeatOccupied($seatsBefore, $row, $col);
-                    if ($isOccipied) {
+                    $isOccupied = $isOccupiedFn($seatsBefore, $row, $col);
+                    if ($isOccupied) {
                         $occupied++;
                     }
-                    $seatsAfter[$row][$col] = $isOccipied;
+                    $seatsAfter[$row][$col] = $isOccupied;
                 }
             }
 
@@ -53,15 +72,11 @@ class Seats extends Runner
         return $occupied;
     }
 
-    protected function runPart2(): string
-    {
-        // TODO: Implement runPart2() method.
-    }
-
-    protected function isSeatOccupied(array $seatsBefore, int $row, int $col): bool
+    protected function isSeatOccupiedNeighboring(array $seatsBefore, int $row, int $col): bool
     {
         $wasOccupiedBefore = $seatsBefore[$row][$col];
         $neighboring = 0;
+
         for ($myRow = $row - 1; $myRow <= $row + 1; $myRow++) {
             for ($myCol = $col - 1; $myCol <= $col + 1; $myCol++) {
                 if ($myRow === $row && $myCol === $col) {
@@ -75,6 +90,46 @@ class Seats extends Runner
         }
 
         if ($neighboring >= 4) {
+            return false;
+        }
+        if ($neighboring === 0) {
+            return true;
+        }
+        return $wasOccupiedBefore;
+    }
+
+    protected function isSeatOccupiedAcross(array $seats, int $rowOrigin, int $colOrigin): bool
+    {
+        $wasOccupiedBefore = $seats[$rowOrigin][$colOrigin];
+        $neighboring = 0;
+        $rowsTotal = count($this->data);
+        $colsTotal = strlen($this->data[0]);
+
+        for ($rowDir = -1; $rowDir <= 1; $rowDir++) {
+            for ($colDir = -1; $colDir <= 1; $colDir++) {
+                if ($rowDir === 0 && $colDir === 0) {
+                    continue;
+                }
+
+                $rowLook = $rowOrigin;
+                $colLook = $colOrigin;
+                while (min($rowLook + $rowDir, $colLook + $colDir) >= 0 && $rowLook + $rowDir < $rowsTotal && $colLook + $colDir < $colsTotal) {
+                    $rowLook += $rowDir;
+                    $colLook += $colDir;
+                    if (!isset($seats[$rowLook][$colLook])) {
+                        continue;
+                    }
+                    if ($seats[$rowLook][$colLook] === true) {
+                        $neighboring++;
+                        break;
+                    }
+
+                    break;  // empty seat found
+                }
+            }
+        }
+
+        if ($neighboring >= 5) {
             return false;
         }
         if ($neighboring === 0) {
