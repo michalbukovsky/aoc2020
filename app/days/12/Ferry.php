@@ -70,7 +70,35 @@ class Ferry extends Runner
 
     protected function runPart2(): string
     {
-        // TODO: Implement runPart2() method.
+        $x = 0;
+        $y = 0;
+        $xWay = 10;
+        $yWay = -1;
+
+        foreach ($this->data as $line) {
+            [$instruction, $distance] = $line;
+            $distance = (int) $distance;
+
+            switch ($instruction) {
+                case self::FORWARD:
+                    $x += $xWay * $distance;
+                    $y += $yWay * $distance;
+                    break;
+                case self::LEFT:
+                    [$xWay, $yWay] = $this->rotateWaypoint($xWay, $yWay, -$distance);
+                    break;
+                case self::RIGHT:
+                    [$xWay, $yWay] = $this->rotateWaypoint($xWay, $yWay, $distance);
+                    break;
+                default:
+                    $directIndexMove = self::HEADING_INDEXES[$instruction];
+                    $directMove = self::INDEX_MOVE[$directIndexMove];
+                    $xWay += $directMove[0] * $distance;
+                    $yWay += $directMove[1] * $distance;
+            }
+        }
+
+        return abs($x) + abs($y);
     }
 
     /**
@@ -80,7 +108,7 @@ class Ferry extends Runner
      */
     protected function rotate(int $headingIndex, int $degrees): int
     {
-        $headingIndex += $degrees / 90;
+        $headingIndex += (int) ($degrees / 90);
         if ($headingIndex < 0) {
             $headingIndex += 4;
         }
@@ -89,6 +117,20 @@ class Ferry extends Runner
         }
 
         return $headingIndex;
+    }
+
+    private function rotateWaypoint(int $xWay, int $yWay, int $distance): array
+    {
+        $steps = (int) (abs($distance) / 90);
+        $direction = ($distance >= 0 ? 1 : -1);
+        do {
+            $xWayOriginal = $xWay;
+            $yWayOriginal = $yWay;
+            $yWay = (int) ($direction * $xWayOriginal);
+            $xWay = (int) (-$direction * $yWayOriginal);
+        } while (--$steps);
+        
+        return [$xWay, $yWay];
     }
 
 }
