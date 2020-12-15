@@ -44,6 +44,57 @@ class Shuttles extends Runner
 
     protected function runPart2(): string
     {
+        $shuttles = explode(',', $this->data[1]);
+        $shuttlesOrdered = [];
+        foreach ($shuttles as $index => $shuttle) {
+            if ($shuttle === 'x') {
+                continue;
+            }
+            $shuttlesOrdered[$index] = (int) $shuttle;
+        }
+        asort($shuttlesOrdered);
+        end($shuttlesOrdered);
+        $maxIndex = key($shuttlesOrdered);
+        reset($shuttlesOrdered);
+
+        $timestamp = 1;
+        $step = 1;
+        $nowSolvingIndex = 0;
+        while (true) {
+            echo "$nowSolvingIndex $timestamp\n";
+            $lastSolved = $this->isSolvedIndex($timestamp, $shuttlesOrdered);
+            if ($lastSolved === $maxIndex) {
+                return $timestamp;
+            }
+            if ($lastSolved === $nowSolvingIndex) {
+                next($shuttlesOrdered);
+                $nowSolvingIndex = key($shuttlesOrdered);
+                $step *= $shuttlesOrdered[$lastSolved];
+            }
+
+            $timestamp += $step;
+        }
+    }
+
+    /**
+     * Highest solved index, null if all
+     *
+     * @param int $timestamp
+     * @param array $shuttles
+     * @return int|null
+     */
+    protected function isSolvedIndex(int $timestamp, array $shuttles): ?int
+    {
+        $lastSolved = null;
+        foreach ($shuttles as $index => $shuttle) {
+            if (($timestamp + $index) % $shuttle === 0) {
+                $lastSolved = $index;
+            } else {
+                return $lastSolved;
+            }
+        }
+
+        return $lastSolved;
     }
 
 }
